@@ -155,3 +155,69 @@ if __name__ == "__main__":
         )
     else:
         print("La serie está terminada.")
+        
+
+# Obtiene las películas pendientes y reinicia el ciclo si todas ya terminaron.
+def obtener_peliculas_ciclo():
+    conexion = conectar()
+    cursor = conexion.cursor(dictionary=True)
+
+    consulta = """
+        SELECT p.id, p.titulo, p.anio, p.duracion, p.ruta_archivo
+        FROM peliculas p
+        LEFT JOIN historial_ciclo_peliculas h
+            ON h.pelicula_id = p.id
+        WHERE p.ruta_archivo IS NOT NULL
+            AND TRIM(p.ruta_archivo) != ''
+            AND h.pelicula_id IS NULL
+    """
+
+    try:
+        cursor.execute(consulta)
+        pendientes = cursor.fetchall()
+
+        if not pendientes:
+            cursor.execute("DELETE FROM historial_ciclo_peliculas")
+            conexion.commit()
+
+            cursor.execute("""
+                SELECT id, titulo, anio, duracion, ruta_archivo
+                FROM peliculas
+                WHERE ruta_archivo IS NOT NULL
+                    AND TRIM(ruta_archivo) != ''
+            """)
+            pendientes = cursor.fetchall()
+
+        return pendientes
+
+    except Exception:
+        conexion.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conexion.close()
+
+
+# Marca una película como emitida para evitar que se repita durante el ciclo.
+def marcar_pelicula_emitida(pelicula_id):
+    conexion = conectar()
+    cursor = conexion.cursor()
+
+    try:
+        cursor.execute(
+            """
+            INSERT IGNORE INTO historial_ciclo_peliculas (pelicula_id)
+            VALUES (%s)
+            """,
+            (pelicula_id,)
+        )
+        conexion.commit()
+
+    except Exception:
+        conexion.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        conexion.close()

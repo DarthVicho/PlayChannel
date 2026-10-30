@@ -1,0 +1,108 @@
+/* Cubre la pantalla y oscurece el contenido de fondo. */
+.advertencia-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(6px);
+}
+
+/* Define la apariencia de la ventana de advertencia. */
+.advertencia-modal {
+    width: 100%;
+    max-width: 520px;
+    padding: 36px;
+    background: #171a20;
+    border: 1px solid #343b45;
+    border-radius: 16px;
+    color: #f4f4f5;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+    animation: advertencia-aparecer 0.25s ease-out;
+}
+
+/* Destaca el icono de advertencia con el color de acento. */
+.advertencia-icono {
+    width: 58px;
+    height: 58px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 20px;
+    border: 2px solid #e5a84b;
+    border-radius: 50%;
+    color: #e5a84b;
+    font-size: 36px;
+    font-weight: 700;
+}
+
+/* Estiliza el título principal de la ventana. */
+.advertencia-modal h2 {
+    margin: 0 0 20px;
+    font-size: 25px;
+    line-height: 1.3;
+}
+
+/* Mantiene legibles los párrafos de la advertencia. */
+.advertencia-modal p {
+    margin: 0 0 15px;
+    color: #d0d4db;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+/* Diferencia la nota informativa del texto principal. */
+.advertencia-modal .advertencia-nota {
+    margin-top: 20px;
+    color: #929ba8;
+    font-size: 13px;
+}
+
+/* Da al botón un estilo acorde con la identidad visual de PlayChannel. */
+.advertencia-boton {
+    width: 100%;
+    margin-top: 12px;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #e5a84b;
+    color: #171a20;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+/* Indica visualmente que el botón puede pulsarse. */
+.advertencia-boton:hover {
+    background: #f0bb68;
+    transform: translateY(-1px);
+}
+
+/* Muestra la ventana suavemente al ingresar. */
+@keyframes advertencia-aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Ajusta los espacios y el título para pantallas pequeñas. */
+@media (max-width: 480px) {
+    .advertencia-modal {
+        padding: 26px 22px;
+    }
+
+    .advertencia-modal h2 {
+        font-size: 21px;
+    }
+}

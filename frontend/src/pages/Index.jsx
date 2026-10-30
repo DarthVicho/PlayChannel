@@ -1,5 +1,6 @@
 
 import { useCallback, useEffect, useState } from "react";
+import AdvertenciaDerechos from "../components/AdvertenciaDerechos";
 import Reproductor from "../components/Reproductor";
 import "../css/Index.css";
 
@@ -43,92 +44,96 @@ function Inicio() {
   const esPelicula = contenido?.tipo === "pelicula";
 
   return (
-    <section className="inicio-page">
-      <header className="page-header">
-        <div>
-          <span className="section-label">
-            TU EXPERIENCIA MULTIMEDIA
-          </span>
-          <h1>Inicio</h1>
-          <p>Tu canal personal, listo para reproducir.</p>
-        </div>
-
-        <div className="channel-status">
-          <span className="status-dot"></span>
-          Canal automático
-        </div>
-      </header>
-
-      <section className="player-container">
-        {cargando ? (
-          <div className="player-placeholder">
-            <h2>Preparando tu canal...</h2>
-            <p>Buscando el próximo contenido.</p>
+    <main>
+      <AdvertenciaDerechos/>
+      <section className="inicio-page">
+        <header className="page-header">
+          <div>
+            <span className="section-label">
+              TU EXPERIENCIA MULTIMEDIA
+            </span>
+            {/*<h1>Inicio</h1>*/}
+            <p>Tu canal personal, listo para reproducir.</p>
           </div>
-        ) : error ? (
-          <div className="player-placeholder">
-            <h2>No se pudo cargar el canal</h2>
-            <p>{error}</p>
-            <button onClick={cargarSiguienteContenido}>
-              Intentar nuevamente
+
+          <div className="channel-status">
+            <span className="status-dot"></span>
+            Canal automático
+          </div>
+        </header>
+
+        <section className="welcome-section">
+          <span className="section-label">TU CANAL, A TU MANERA</span>
+          <p>
+            Play Channel organiza tu biblioteca multimedia y selecciona
+            automáticamente el contenido que se transmitirá.
+          </p>
+        </section>
+        
+
+        <section className="player-container">
+          {cargando ? (
+            <div className="player-placeholder">
+              <h2>Preparando tu canal...</h2>
+              <p>Buscando el próximo contenido.</p>
+            </div>
+          ) : error ? (
+            <div className="player-placeholder">
+              <h2>No se pudo cargar el canal</h2>
+              <p>{error}</p>
+              <button onClick={cargarSiguienteContenido}>
+                Intentar nuevamente
+              </button>
+            </div>
+          ) : esPelicula && contenido.ruta_archivo ? (
+            <Reproductor
+              key={contenido.id}
+              pelicula={{
+                id: contenido.id,
+                titulo: contenido.titulo,
+                anio: contenido.anio,
+                duracion: contenido.duracion,
+                ruta_archivo: contenido.ruta_archivo,
+              }}
+              onTerminado={cargarSiguienteContenido}
+            />
+          ) : (
+            <div className="player-placeholder">
+              <div className="play-icon">▶</div>
+              <h2>{contenido?.titulo || "Tu canal está listo"}</h2>
+              <p>
+                {contenido?.tipo === "serie"
+                  ? "La selección corresponde a una serie. La reproducción de episodios se integrará después."
+                  : "Este contenido todavía no tiene un archivo de video disponible."}
+              </p>
+            </div>
+          )}
+          {/*
+          <div className="player-info">
+            <div>
+              <span className="section-label">SELECCIÓN ACTUAL</span>
+              <h3>{contenido?.titulo || "Esperando contenido"}</h3>
+              <p>
+                {contenido?.tipo === "pelicula"
+                  ? "Película seleccionada por el canal"
+                  : contenido?.tipo === "serie"
+                    ? "Serie seleccionada por el canal"
+                    : "Las películas y series aparecerán en este espacio."}
+              </p>
+            </div>
+
+            <button
+              className="boton-siguiente"
+              onClick={cargarSiguienteContenido}
+              disabled={cargando}
+            >
+              {cargando ? "Buscando..." : "Siguiente selección"}
             </button>
           </div>
-        ) : esPelicula && contenido.ruta_archivo ? (
-          <Reproductor
-            key={contenido.id}
-            pelicula={{
-              id: contenido.id,
-              titulo: contenido.titulo,
-              anio: contenido.anio,
-              duracion: contenido.duracion,
-              ruta_archivo: contenido.ruta_archivo,
-            }}
-            onTerminado={cargarSiguienteContenido}
-          />
-        ) : (
-          <div className="player-placeholder">
-            <div className="play-icon">▶</div>
-            <h2>{contenido?.titulo || "Tu canal está listo"}</h2>
-            <p>
-              {contenido?.tipo === "serie"
-                ? "La selección corresponde a una serie. La reproducción de episodios se integrará después."
-                : "Este contenido todavía no tiene un archivo de video disponible."}
-            </p>
-          </div>
-        )}
-
-        <div className="player-info">
-          <div>
-            <span className="section-label">SELECCIÓN ACTUAL</span>
-            <h3>{contenido?.titulo || "Esperando contenido"}</h3>
-            <p>
-              {contenido?.tipo === "pelicula"
-                ? "Película seleccionada por el canal"
-                : contenido?.tipo === "serie"
-                  ? "Serie seleccionada por el canal"
-                  : "Las películas y series aparecerán en este espacio."}
-            </p>
-          </div>
-
-          <button
-            className="boton-siguiente"
-            onClick={cargarSiguienteContenido}
-            disabled={cargando}
-          >
-            {cargando ? "Buscando..." : "Siguiente selección"}
-          </button>
-        </div>
+          */}
+        </section>
       </section>
-
-      <section className="welcome-section">
-        <span className="section-label">TU CANAL, A TU MANERA</span>
-        <h2>¿Qué veremos hoy?</h2>
-        <p>
-          Play Channel organiza tu biblioteca multimedia y selecciona
-          automáticamente el contenido que se transmitirá.
-        </p>
-      </section>
-    </section>
+    </main>
   );
 }
 
