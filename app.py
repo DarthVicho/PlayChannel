@@ -11,7 +11,9 @@ from database import (
     obtener_series,
     obtener_contenido,
     obtener_siguiente_episodio,
-    conectar
+    conectar,
+    obtener_peliculas_ciclo,
+    marcar_pelicula_emitida
 )
 
 from random_engine import seleccionar_contenido
@@ -270,6 +272,8 @@ def actualizar_progreso_pelicula(pelicula_id):
             posicion=posicion,
             terminado=terminado
         )
+        if terminado:
+            marcar_pelicula_emitida(pelicula_id)
         return jsonify({
             "mensaje": "Progreso guardado correctamente."
         })
@@ -312,83 +316,42 @@ def consultar_progreso_pelicula(pelicula_id):
         "terminado": bool(progreso["terminado"])
     })
 
+# Selecciona aleatoriamente una película que todavía no se ha emitido en el ciclo.
 @app.route("/api/canal/siguiente")
 def siguiente_contenido():
+    try:
+        peliculas = obtener_peliculas_ciclo()
+        seleccionada = seleccionar_contenido(peliculas)
 
-    # Obtener las películas y series de MySQL
-    contenido = obtener_contenido()
-    # Elegir un contenido al azar
-    seleccionado = seleccionar_contenido(contenido)
-    if seleccionado is None:
-        return jsonify({
-            "mensaje": "No hay contenido disponible."
-        }), 404
-    # Preparar la información de la respuesta
-    resultado = {
-        "id": seleccionado["id"],
-        "titulo": seleccionado["titulo"],
-        "tipo": seleccionado["tipo"],
-        "ruta_archivo": None,
-        "posicion": 0,
-        "terminado": False
-    }
-
-    # Si se seleccionó una película
-    if seleccionado["tipo"] == "pelicula":
-        peliculas = obtener_peliculas()
-        pelicula = next(
-            (
-                p for p in peliculas
-                if p["id"] == seleccionado["id"]
-            ),
-            None
-        )
-
-        if pelicula is not None:
-            resultado["ruta_archivo"] = pelicula["ruta_archivo"]
-            progreso = obtener_progreso(
-                pelicula_id=seleccionado["id"]
-        )
-
-        if progreso is not None:
-            resultado["posicion"] = progreso["posicion"]
-            resultado["terminado"] = bool(
-                progreso["terminado"]
-            )
-
-    # Si se seleccionó una serie
-    elif seleccionado["tipo"] == "serie":
-
-        episodio = obtener_siguiente_episodio(
-            seleccionado["id"]
-        )
-
-        if episodio is None:
+        if seleccionada is None:
             return jsonify({
-                "titulo": seleccionado["titulo"],
-                "tipo": "serie",
-                "mensaje": "La serie no tiene episodios pendientes."
-            })
+                "mensaje": "No hay películas con videos disponibles."
+            }), 404
 
-        resultado["episodio"] = {
-            "id": episodio["id"],
-            "temporada": episodio["temporada"],
-            "numero": episodio["episodio"],
-            "titulo": episodio["titulo"]
-        }
-
-        resultado["ruta_archivo"] = episodio["ruta_archivo"]
         progreso = obtener_progreso(
-            episodio_id=episodio["id"]
+            pelicula_id=seleccionada["id"]
         )
 
-        if progreso is not None:
-            resultado["posicion"] = progreso["posicion"]
-            resultado["terminado"] = bool(
-                progreso["terminado"]
+        return jsonify({
+            "id": seleccionada["id"],
+            "titulo": seleccionada["titulo"],
+            "tipo": "pelicula",
+            "anio": seleccionada.get("anio"),
+            "duracion": seleccionada.get("duracion"),
+            "ruta_archivo": seleccionada["ruta_archivo"],
+            "posicion": (
+                progreso["posicion"] if progreso else 0
+            ),
+            "terminado": (
+                bool(progreso["terminado"]) if progreso else False
             )
+        })
 
-    return jsonify(resultado)
+    except Exception:
+        app.logger.exception("Error al seleccionar la siguiente película.")
+        return jsonify({
+            "mensaje": "No se pudo seleccionar la siguiente película."
+        }), 500
 
 
 if __name__ == "__main__":

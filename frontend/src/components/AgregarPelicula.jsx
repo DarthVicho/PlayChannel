@@ -66,46 +66,16 @@ function AgregarPelicula({ onAgregada, onCerrar }) {
       <p>Selecciona un video y completa sus datos.</p>
 
       <label htmlFor="titulo-pelicula">Título</label>
-      <input
-        id="titulo-pelicula"
-        type="text"
-        value={titulo}
-        onChange={(e) => setTitulo(e.target.value)}
-        placeholder="Ej. Big Buck Bunny"
-        required
-      />
+      <input id="titulo-pelicula" type="text" value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Ej. Big Buck Bunny" required/>
 
       <label htmlFor="anio-pelicula">Año</label>
-      <input
-        id="anio-pelicula"
-        type="number"
-        min="1888"
-        max="2100"
-        value={anio}
-        onChange={(e) => setAnio(e.target.value)}
-        placeholder="Ej. 2008"
-        required
-      />
+      <input id="anio-pelicula" type="number" min="1888" max="2100" value={anio} onChange={(e) => setAnio(e.target.value)} placeholder="Ej. 2008" required/>
 
       <label htmlFor="duracion-pelicula">Duración en minutos</label>
-      <input
-        id="duracion-pelicula"
-        type="number"
-        min="1"
-        value={duracion}
-        onChange={(e) => setDuracion(e.target.value)}
-        placeholder="Ej. 10"
-        required
-      />
+      <input id="duracion-pelicula" type="number" min="1" value={duracion} onChange={(e) => setDuracion(e.target.value)} placeholder="Ej. 10"required/>
 
       <label htmlFor="archivo-pelicula">Archivo de video</label>
-      <input
-        id="archivo-pelicula"
-        type="file"
-        accept=".mp4,.mkv,.webm,.avi,.mov,video/*"
-        onChange={(e) => setArchivo(e.target.files?.[0] || null)}
-        required
-      />
+      <input id="archivo-pelicula" type="file" accept=".mp4,.mkv,.webm,.avi,.mov,video/*" onChange={(e) => setArchivo(e.target.files?.[0] || null)} placeholder=".mp4,.mkv,.webm,.avi,.mov,video/*" required/>
 
       {archivo && (
         <p className="archivo-seleccionado">
