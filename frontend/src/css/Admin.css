@@ -1,0 +1,472 @@
+
+/* ==============================
+   ADMINISTRACIÓN PLAYCHANNEL
+================================ */
+
+.admin-page {
+    min-height: 100vh;
+    padding: 40px;
+    background: #111820;
+    color: #f1f3f5;
+}
+
+/* ==============================
+   ENCABEZADO
+================================ */
+
+.admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 45px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid #293541;
+}
+
+.admin-subtitle {
+    display: block;
+    margin-bottom: 10px;
+    color: #c6a45c;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.admin-header h1 {
+    margin: 0;
+    color: #f5f5f5;
+    font-size: 34px;
+}
+
+.admin-header p {
+    margin-top: 10px;
+    color: #9ba8b5;
+    font-size: 14px;
+}
+
+.admin-header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    border: 1px solid #394653;
+    border-radius: 14px;
+    background: #202b36;
+    color: #c6a45c;
+    font-size: 27px;
+}
+
+/* ==============================
+   SECCIONES
+================================ */
+
+.admin-section {
+    margin-bottom: 45px;
+}
+
+.admin-section h2 {
+    margin-bottom: 10px;
+    color: #f1f3f5;
+    font-size: 23px;
+}
+
+.admin-description {
+    margin-bottom: 25px;
+    color: #9ba8b5;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* ==============================
+   TARJETAS PRINCIPALES
+================================ */
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 22px;
+    margin-top: 25px;
+}
+
+.admin-card {
+    padding: 25px;
+    border: 1px solid #303d49;
+    border-radius: 14px;
+    background: #1b2631;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.admin-card:hover {
+    transform: translateY(-4px);
+    border-color: #c6a45c;
+    background: #222f3b;
+}
+
+.admin-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    background: #293746;
+    color: #c6a45c;
+    font-size: 23px;
+}
+
+.admin-card h3 {
+    margin-bottom: 10px;
+    color: #f1f3f5;
+    font-size: 18px;
+}
+
+.admin-card p {
+    min-height: 60px;
+    color: #9ba8b5;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.admin-card-status {
+    display: inline-block;
+    margin-top: 15px;
+    color: #c6a45c;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ==============================
+   BOTÓN VOLVER
+================================ */
+
+.admin-back-button {
+    display: inline-block;
+    margin-bottom: 25px;
+    padding: 10px 15px;
+    border: 1px solid #394653;
+    border-radius: 8px;
+    background: #202b36;
+    color: #cbd3da;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.admin-back-button:hover {
+    border-color: #c6a45c;
+    color: #c6a45c;
+}
+
+/* ==============================
+   FORMULARIO
+================================ */
+
+.admin-form {
+    max-width: 720px;
+    margin-top: 25px;
+    padding: 30px;
+    border: 1px solid #303d49;
+    border-radius: 14px;
+    background: #1b2631;
+}
+
+.admin-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-bottom: 22px;
+}
+
+.admin-form-group label {
+    color: #dce2e8;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.admin-form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #394653;
+    border-radius: 8px;
+    outline: none;
+    background: #131d26;
+    color: #f1f3f5;
+    font-family: inherit;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.admin-form-group input:focus {
+    border-color: #c6a45c;
+    box-shadow: 0 0 0 2px rgba(198, 164, 92, 0.12);
+}
+
+.admin-form-group input::placeholder {
+    color: #71808e;
+}
+
+.admin-form-group input[type="file"] {
+    padding: 10px;
+    color: #aeb9c4;
+    cursor: pointer;
+}
+
+.admin-form-group input[type="file"]::file-selector-button {
+    margin-right: 12px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background: #344454;
+    color: #f1f3f5;
+    cursor: pointer;
+}
+
+.admin-form-group input[type="file"]::file-selector-button:hover {
+    background: #45596d;
+}
+
+.admin-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.admin-file-name {
+    color: #c6a45c;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+/* ==============================
+   BOTONES DEL FORMULARIO
+================================ */
+
+.admin-form-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.admin-submit-button {
+    padding: 12px 22px;
+    border: none;
+    border-radius: 8px;
+    background: #c6a45c;
+    color: #151b21;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.admin-submit-button:hover:not(:disabled) {
+    background: #d9b96f;
+    transform: translateY(-2px);
+}
+
+.admin-submit-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ==============================
+   MENSAJES
+================================ */
+
+.admin-message {
+    margin: 15px 0;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.admin-message.success {
+    border: 1px solid #286c4c;
+    background: #173b2c;
+    color: #8fe0b1;
+}
+
+.admin-message.error {
+    border: 1px solid #80434a;
+    background: #3b2228;
+    color: #ff9ca5;
+}
+
+/* ==============================
+   LISTADO DE PELÍCULAS
+================================ */
+
+.admin-list-section {
+    margin-top: 55px;
+}
+
+.admin-list-section h2 {
+    margin-bottom: 22px;
+}
+
+.admin-movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 22px;
+}
+
+.admin-movie-card {
+    overflow: hidden;
+    border: 1px solid #303d49;
+    border-radius: 12px;
+    background: #1b2631;
+    transition: 0.25s ease;
+}
+
+.admin-movie-card:hover {
+    transform: translateY(-4px);
+    border-color: #c6a45c;
+}
+
+/* Portadas */
+
+.admin-movie-poster {
+    display: block;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    background: #263441;
+}
+
+.admin-movie-poster-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    background: linear-gradient(145deg, #293746, #17232e);
+    color: #c6a45c;
+    font-size: 45px;
+}
+
+/* Información de las películas */
+
+.admin-movie-info {
+    padding: 15px;
+}
+
+.admin-movie-info h3 {
+    display: -webkit-box;
+    overflow: hidden;
+    min-height: 40px;
+    margin-bottom: 8px;
+    color: #f1f3f5;
+    font-size: 15px;
+    line-height: 1.4;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.admin-movie-info p {
+    margin-bottom: 15px;
+    color: #9ba8b5;
+    font-size: 12px;
+}
+
+/* Botón editar */
+
+.admin-edit-button {
+    width: 100%;
+    padding: 9px;
+    border: 1px solid #a88a4e;
+    border-radius: 7px;
+    background: transparent;
+    color: #c6a45c;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.admin-edit-button:hover {
+    background: #c6a45c;
+    color: #151b21;
+}
+
+/* Botón para eliminar películas */
+.admin-delete-button {
+    width: 100%;
+    padding: 9px;
+    margin-top: 8px;
+    background-color: transparent;
+    border: 1px solid #b84040;
+    border-radius: 6px;
+    color: #e05a5a;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.admin-delete-button:hover {
+    background-color: #b84040;
+    color: #ffffff;
+}
+
+.admin-delete-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ==============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 768px) {
+    .admin-page {
+        padding: 25px 18px;
+    }
+
+    .admin-header {
+        gap: 15px;
+    }
+
+    .admin-header h1 {
+        font-size: 27px;
+    }
+
+    .admin-header-icon {
+        width: 45px;
+        height: 45px;
+        flex-shrink: 0;
+    }
+
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-form {
+        padding: 22px 18px;
+    }
+
+    .admin-movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+        gap: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .admin-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-form-actions button {
+        width: 100%;
+    }
+}

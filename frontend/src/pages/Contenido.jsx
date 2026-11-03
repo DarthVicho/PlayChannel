@@ -5,6 +5,7 @@ import "../css/Contenido.css";
 
 const API_URL = "http://127.0.0.1:5000";
 
+// Muestra y administra el contenido que el usuario tiene en su biblioteca.
 function Contenido() {
   const [peliculas, setPeliculas] = useState([]);
   const [series, setSeries] = useState([]);
@@ -16,25 +17,27 @@ function Contenido() {
   const [peliculaSeleccionada, setPeliculaSeleccionada] = useState("");
   const [eliminando, setEliminando] = useState(false);
 
+  // Obtiene únicamente los registros que pertenecen a Mi contenido.
   const cargarContenido = useCallback(async () => {
     try {
       setCargando(true);
       setError("");
 
-      const [respuestaPeliculas, respuestaSeries] = await Promise.all([
-        fetch(`${API_URL}/api/peliculas`),
-        fetch(`${API_URL}/api/series`),
-      ]);
+      const respuesta = await fetch(`${API_URL}/api/mi-contenido`);
 
-      if (!respuestaPeliculas.ok || !respuestaSeries.ok) {
-        throw new Error("No se pudo cargar la biblioteca.");
+      if (!respuesta.ok) {
+        throw new Error("No se pudo cargar Mi contenido.");
       }
 
-      const datosPeliculas = await respuestaPeliculas.json();
-      const datosSeries = await respuestaSeries.json();
+      const datos = await respuesta.json();
 
-      setPeliculas(datosPeliculas);
-      setSeries(datosSeries);
+      setPeliculas(
+        datos.filter((item) => item.tipo_contenido === "pelicula")
+      );
+
+      setSeries(
+        datos.filter((item) => item.tipo_contenido === "serie")
+      );
     } catch (err) {
       setError(err.message || "No se pudo conectar con Flask.");
     } finally {
@@ -46,6 +49,7 @@ function Contenido() {
     cargarContenido();
   }, [cargarContenido]);
 
+  // Quita una película de Mi contenido sin eliminar su registro original.
   async function borrarPelicula() {
     if (!peliculaSeleccionada) {
       setError("Selecciona una película para eliminar.");
@@ -53,7 +57,7 @@ function Contenido() {
     }
 
     const pelicula = peliculas.find(
-      (item) => String(item.id) === String(peliculaSeleccionada)
+      (item) => String(item.contenido_id) === String(peliculaSeleccionada)
     );
 
     if (!pelicula) {
@@ -62,7 +66,7 @@ function Contenido() {
     }
 
     const confirmar = window.confirm(
-      `¿Seguro que quieres eliminar "${pelicula.titulo}"? Esta acción no se puede deshacer.`
+      `¿Quieres quitar "${pelicula.titulo}" de Mi contenido? El archivo original se conservará.`
     );
 
     if (!confirmar) return;
@@ -73,17 +77,19 @@ function Contenido() {
       setMensaje("");
 
       const respuesta = await fetch(
-        `${API_URL}/api/peliculas/${pelicula.id}`,
+        `${API_URL}/api/mi-contenido/pelicula/${pelicula.contenido_id}`,
         { method: "DELETE" }
       );
 
       const datos = await respuesta.json();
 
       if (!respuesta.ok) {
-        throw new Error(datos.error || "No se pudo eliminar la película.");
+        throw new Error(
+          datos.mensaje || "No se pudo quitar la película de Mi contenido."
+        );
       }
 
-      setMensaje(datos.mensaje || "Película eliminada correctamente.");
+      setMensaje(datos.mensaje || "Película quitada de Mi contenido.");
       setPeliculaSeleccionada("");
       setMostrarBorrar(false);
 
@@ -128,7 +134,7 @@ function Contenido() {
               setPeliculaSeleccionada("");
             }}
           >
-            {mostrarBorrar ? "Cancelar" : "− Borrar contenido"}
+            {mostrarBorrar ? "Cancelar" : "− Quitar contenido"}
           </button>
         </div>
       </header>
@@ -147,12 +153,15 @@ function Contenido() {
 
       {mostrarBorrar && (
         <section className="formulario-contenedor">
-          <h2>Borrar contenido</h2>
-          <p>Selecciona la película que deseas eliminar de tu biblioteca.</p>
+          <h2>Quitar contenido</h2>
+          <p>
+            Selecciona la película que deseas quitar de tu biblioteca.
+            El registro original y su video se conservarán.
+          </p>
 
           {peliculas.length === 0 ? (
             <p className="mensaje-contenido">
-              No hay películas disponibles para eliminar.
+              No hay películas disponibles para quitar.
             </p>
           ) : (
             <>
@@ -165,7 +174,10 @@ function Contenido() {
               >
                 <option value="">Selecciona una película</option>
                 {peliculas.map((pelicula) => (
-                  <option key={pelicula.id} value={pelicula.id}>
+                  <option
+                    key={pelicula.contenido_id}
+                    value={pelicula.contenido_id}
+                  >
                     {pelicula.titulo} ({pelicula.anio || "Año desconocido"})
                   </option>
                 ))}
@@ -186,7 +198,7 @@ function Contenido() {
                   onClick={borrarPelicula}
                   disabled={eliminando || !peliculaSeleccionada}
                 >
-                  {eliminando ? "Eliminando..." : "Eliminar película"}
+                  {eliminando ? "Quitando..." : "Quitar de Mi contenido"}
                 </button>
               </div>
             </>
@@ -210,7 +222,7 @@ function Contenido() {
       </section>
 
       {cargando ? (
-        <p className="mensaje-contenido">Cargando biblioteca...</p>
+        <p className="mensaje-contenido">Cargando Mi contenido...</p>
       ) : (
         <>
           <section className="biblioteca-seccion">
@@ -218,12 +230,15 @@ function Contenido() {
 
             {peliculas.length === 0 ? (
               <p className="mensaje-contenido">
-                Todavía no hay películas registradas.
+                Todavía no tienes películas en Mi contenido.
               </p>
             ) : (
               <div className="biblioteca-grid">
                 {peliculas.map((pelicula) => (
-                  <article className="biblioteca-card" key={pelicula.id}>
+                  <article
+                    className="biblioteca-card"
+                    key={pelicula.contenido_id}
+                  >
                     <div className="biblioteca-card-icon">▶</div>
                     <div className="biblioteca-card-info">
                       <h3>{pelicula.titulo}</h3>
@@ -241,12 +256,15 @@ function Contenido() {
 
             {series.length === 0 ? (
               <p className="mensaje-contenido">
-                Todavía no hay series registradas.
+                Todavía no tienes series en Mi contenido.
               </p>
             ) : (
               <div className="biblioteca-grid">
                 {series.map((serie) => (
-                  <article className="biblioteca-card" key={serie.id}>
+                  <article
+                    className="biblioteca-card"
+                    key={serie.contenido_id}
+                  >
                     <div className="biblioteca-card-icon serie-icon">▤</div>
                     <div className="biblioteca-card-info">
                       <h3>{serie.titulo}</h3>
