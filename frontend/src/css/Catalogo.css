@@ -1,0 +1,370 @@
+/* Define el contenedor principal del catálogo. */
+.catalogo-page {
+    width: 100%;
+    min-height: 100%;
+    padding: 35px;
+    color: #f4f4f5;
+}
+
+/* Organiza el encabezado del catálogo. */
+.catalogo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #303945;
+}
+
+/* Estiliza el título principal. */
+.catalogo-header h1 {
+    margin: 10px 0;
+    font-size: 32px;
+}
+
+/* Estiliza la descripción. */
+.catalogo-header p,
+.catalogo-controles p {
+    color: #9ca6b3;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Destaca el icono del encabezado. */
+.catalogo-header-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 65px;
+    height: 65px;
+    border-radius: 15px;
+    background: #252e38;
+    color: #e5a84b;
+    font-size: 30px;
+}
+
+/* Organiza el título y los filtros. */
+.catalogo-controles {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.catalogo-controles h2 {
+    margin-bottom: 5px;
+    font-size: 21px;
+}
+
+/* Organiza los filtros del catálogo. */
+.catalogo-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.catalogo-filtros button {
+    padding: 9px 15px;
+    border: 1px solid #303945;
+    border-radius: 7px;
+    background: #1b222b;
+    color: #aeb7c3;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.catalogo-filtros button.activo {
+    border-color: #e5a84b;
+    background: #e5a84b;
+    color: #171c22;
+    font-weight: 700;
+}
+
+/* Organiza las tarjetas del catálogo. */
+.catalogo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+/* Define la apariencia de cada contenido. */
+.catalogo-card {
+    display: flex;
+    flex-direction: column;
+    padding: 22px;
+    background: #1b222b;
+    border: 1px solid #303945;
+    border-radius: 13px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.catalogo-card:hover {
+    border-color: #e5a84b;
+    transform: translateY(-3px);
+}
+
+/* Destaca el icono del contenido. */
+.catalogo-card-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 160px;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: #252e38;
+    color: #e5a84b;
+    font-size: 35px;
+}
+
+/* Organiza la información de cada tarjeta. */
+.catalogo-card-info {
+    flex: 1;
+}
+
+.catalogo-tipo {
+    color: #e5a84b;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.catalogo-card-info h3 {
+    margin: 8px 0;
+    font-size: 17px;
+}
+
+.catalogo-card-info p {
+    margin-bottom: 20px;
+    color: #9ca6b3;
+    font-size: 13px;
+}
+
+/* Estiliza el botón para agregar contenido. */
+.catalogo-agregar {
+    width: 100%;
+    padding: 11px;
+    border: none;
+    border-radius: 7px;
+    background: #e5a84b;
+    color: #171c22;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.catalogo-agregar.agregado {
+    border: 1px solid #3b7654;
+    background: #243d30;
+    color: #78d99b;
+    cursor: default;
+}
+
+.catalogo-agregar:disabled {
+    opacity: 0.85;
+}
+
+/* Muestra los mensajes de respuesta. */
+.catalogo-error {
+    margin-bottom: 18px;
+    color: #f07878;
+    font-size: 13px;
+}
+
+.catalogo-exito {
+    margin-bottom: 18px;
+    color: #65c98a;
+    font-size: 13px;
+}
+
+/* Estiliza el estado sin resultados. */
+.catalogo-vacio {
+    padding: 55px 20px;
+    text-align: center;
+    color: #9ca6b3;
+}
+
+.catalogo-vacio span {
+    color: #e5a84b;
+    font-size: 35px;
+}
+
+.catalogo-vacio h3 {
+    margin: 15px 0 8px;
+    color: #f4f4f5;
+}
+
+.catalogo-card-poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: inherit;
+}
+
+/* Grilla del catálogo */
+.catalogo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 24px;
+}
+
+/* Tarjeta */
+.catalogo-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #1c252f;
+    border: 1px solid #303b47;
+    border-radius: 12px;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.catalogo-card:hover {
+    transform: translateY(-5px);
+    border-color: #e8aa45;
+}
+
+/* Espacio del póster */
+.catalogo-poster-container {
+    position: relative;
+    width: 100%;
+    height: 290px;
+    overflow: hidden;
+    background: #111820;
+}
+
+/* Imagen */
+.catalogo-card-poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.catalogo-card:hover .catalogo-card-poster {
+    transform: scale(1.05);
+}
+
+/* Imagen genérica cuando no hay póster */
+.catalogo-poster-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e8aa45;
+    font-size: 42px;
+}
+
+/* Información debajo del póster */
+.catalogo-card-info {
+    padding: 15px;
+}
+
+.catalogo-tipo {
+    color: #e8aa45;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.catalogo-card-info h3 {
+    margin: 8px 0;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.catalogo-card-info p {
+    margin: 0;
+    color: #aab6c3;
+    font-size: 12px;
+}
+
+/* Botón oculto inicialmente */
+.catalogo-agregar {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    border: none;
+    background: rgba(5, 12, 20, 0.48);
+    color: white;
+    cursor: pointer;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease;
+}
+
+/* Círculo con el símbolo + */
+.catalogo-agregar-icono {
+    width: 58px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid white;
+    border-radius: 50%;
+    font-size: 38px;
+    font-weight: 300;
+
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Texto debajo del círculo */
+.catalogo-agregar-texto {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Efecto al pasar el cursor */
+.catalogo-card:hover .catalogo-agregar,
+.catalogo-card:focus-within .catalogo-agregar {
+    opacity: 1;
+    visibility: visible;
+}
+
+.catalogo-card:hover .catalogo-agregar-icono {
+    transform: scale(1.12);
+    box-shadow: 0 0 22px rgba(232, 170, 69, 0.75);
+    border-color: #e8aa45;
+    color: #e8aa45;
+}
+
+.catalogo-agregar:disabled {
+    cursor: default;
+}
+
+/* Adapta el catálogo a pantallas pequeñas. */
+@media (max-width: 600px) {
+    .catalogo-page {
+        padding: 22px 16px;
+    }
+
+    .catalogo-header h1 {
+        font-size: 26px;
+    }
+
+    .catalogo-header-icon {
+        width: 50px;
+        height: 50px;
+    }
+
+    .catalogo-controles {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

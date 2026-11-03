@@ -21,7 +21,12 @@ function MainLayout() {
 
           <NavLink to="/contenido" className="nav-link">
             <span>▤</span>
-            Contenido
+            Mi Contenido
+          </NavLink>
+
+          <NavLink to="/catalogo" className="nav-link">
+            <span>▤</span>
+            Catálogo
           </NavLink>
 
           <NavLink to="/configuracion" className="nav-link">
