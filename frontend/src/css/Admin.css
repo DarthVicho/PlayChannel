@@ -418,6 +418,120 @@
     cursor: not-allowed;
 }
 
+.admin-current-file {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 12px;
+    background: #141e28;
+    border: 1px solid #354452;
+    border-radius: 7px;
+    color: #dce4ed;
+    font-size: 13px;
+}
+
+.admin-delete-file-button {
+    padding: 7px 12px;
+    background: transparent;
+    border: 1px solid #e04444;
+    border-radius: 6px;
+    color: #ff5555;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.admin-delete-file-button:hover {
+    background: #e04444;
+    color: white;
+}
+
+.admin-delete-file-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.admin-serie-card {
+    display: flex;
+    align-items: stretch;
+    gap: 25px;
+    width: 100%;
+    padding: 24px;
+    box-sizing: border-box;
+    background: #202e3b;
+    border: 1px solid #c49a42;
+    border-radius: 16px;
+}
+.admin-serie-poster {
+    width: 170px;
+    min-width: 170px;
+    height: 250px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #293746;
+}
+.admin-serie-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.admin-serie-poster-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-size: 45px;
+}
+.admin-serie-info {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    padding: 5px 0;
+}
+.admin-serie-info h3 {
+    margin: 0 0 12px;
+    color: #fff;
+    font-size: 23px;
+}
+.admin-serie-anio {
+    margin: 0 0 25px;
+    color: #9bb8d3;
+}
+.admin-serie-descripcion {
+    margin: 0 0 25px;
+    color: #b7c7d8;
+    line-height: 1.6;
+}
+.admin-serie-info .admin-card-status {
+    margin-top: auto;
+    color: #d9a441;
+    font-weight: 600;
+}
+.admin-serie-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    width: 145px;
+    min-width: 145px;
+}
+.admin-serie-actions button {
+    width: 100%;
+    padding: 14px 10px;
+    border: none;
+    border-radius: 10px;
+    background: #171717;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+.admin-serie-actions button:hover {
+    background: #343434;
+}
 /* ==============================
    RESPONSIVE
 ================================ */

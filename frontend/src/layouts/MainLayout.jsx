@@ -15,22 +15,22 @@ function MainLayout() {
 
         <nav className="sidebar-nav">
           <NavLink to="/" end className="nav-link">
-            <span>⌂</span>
+            <span>🏠</span>
             Inicio
           </NavLink>
 
           <NavLink to="/contenido" className="nav-link">
-            <span>▤</span>
+            <span>🎞️</span>
             Mi Contenido
           </NavLink>
 
           <NavLink to="/catalogo" className="nav-link">
-            <span>▤</span>
+            <span>🗃️</span>
             Catálogo
           </NavLink>
 
           <NavLink to="/configuracion" className="nav-link">
-            <span>⚙</span>
+            <span>⚙️</span>
             Configuración
           </NavLink>
         </nav>

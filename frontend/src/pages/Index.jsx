@@ -1,7 +1,6 @@
-
 import { useCallback, useEffect, useState } from "react";
-import AdvertenciaDerechos from "../components/AdvertenciaDerechos";
 import Reproductor from "../components/Reproductor";
+import AdvertenciaDerechos from "../components/AdvertenciaDerechos";
 import "../css/Index.css";
 
 const API_URL = "http://127.0.0.1:5000";
@@ -11,37 +10,37 @@ function Inicio() {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
 
+  //Solicita el siguiente contenido al canal.
   const cargarSiguienteContenido = useCallback(async () => {
     try {
       setCargando(true);
       setError("");
-
       const respuesta = await fetch(
         `${API_URL}/api/canal/siguiente`
       );
-
-      const datos = await respuesta.json();
-
+      const resultado = await respuesta.json();
       if (!respuesta.ok) {
         throw new Error(
-          datos.mensaje || "No se pudo obtener contenido."
+          resultado.mensaje || "No se pudo obtener el siguiente contenido."
         );
       }
-
-      setContenido(datos);
+      setContenido(resultado);
     } catch (err) {
-      setError(err.message || "No se pudo conectar con Flask.");
+      console.error("Error al cargar contenido:", err);
       setContenido(null);
+      setError(err.message || "Error de conexión con el servidor.");
     } finally {
       setCargando(false);
     }
   }, []);
 
+  //Carga el primer contenido al entrar en Inicio.
   useEffect(() => {
     cargarSiguienteContenido();
   }, [cargarSiguienteContenido]);
 
   const esPelicula = contenido?.tipo === "pelicula";
+  const esEpisodio = contenido?.tipo === "episodio";
 
   return (
     <main>
@@ -65,11 +64,9 @@ function Inicio() {
         <section className="welcome-section">
           <span className="section-label">TU CANAL, A TU MANERA</span>
           <p>
-            Play Channel organiza tu biblioteca multimedia y selecciona
-            automáticamente el contenido que se transmitirá.
+            Play Channel organiza tu biblioteca multimedia y selecciona automáticamente el contenido que se transmitirá.
           </p>
         </section>
-        
 
         <section className="player-container">
           {cargando ? (
@@ -85,15 +82,12 @@ function Inicio() {
                 Intentar nuevamente
               </button>
             </div>
-          ) : esPelicula && contenido.ruta_archivo ? (
+          ) : (esPelicula || esEpisodio) && contenido.ruta_archivo ? (
             <Reproductor
-              key={contenido.id}
+              key={`${contenido.tipo}-${contenido.id}`}
               pelicula={{
-                id: contenido.id,
-                titulo: contenido.titulo,
-                anio: contenido.anio,
-                duracion: contenido.duracion,
-                ruta_archivo: contenido.ruta_archivo,
+                ...contenido,
+                tipo: contenido.tipo
               }}
               onTerminado={cargarSiguienteContenido}
             />

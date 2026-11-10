@@ -115,30 +115,29 @@ def obtener_episodios_serie(serie_id):
         cursor.close()
         conexion.close()
 
-#Obtiene el siguiente episodio pendiente de una serie.
+# Obtiene el siguiente episodio cronológico pendiente de una serie.
 def obtener_siguiente_episodio(serie_id):
     conexion = conectar()
     cursor = conexion.cursor(dictionary=True)
     try:
         consulta = """
             SELECT
-                episodios.id,
-                temporadas.numero AS temporada,
-                episodios.numero AS episodio,
-                episodios.titulo,
-                episodios.duracion,
-                episodios.ruta_archivo
-            FROM episodios
-            INNER JOIN temporadas
-                ON episodios.temporada_id = temporadas.id
-            LEFT JOIN progreso
-                ON progreso.episodio_id = episodios.id
-            WHERE temporadas.serie_id = %s
-                AND (
-                    progreso.id IS NULL
-                    OR progreso.terminado = FALSE
-                )
-            ORDER BY temporadas.numero, episodios.numero
+                e.id,
+                t.numero AS temporada,
+                e.numero AS episodio,
+                e.titulo,
+                e.duracion,
+                e.ruta_archivo
+            FROM episodios e
+            INNER JOIN temporadas t
+                ON e.temporada_id = t.id
+            LEFT JOIN historial_ciclo_episodios h
+                ON h.episodio_id = e.id
+            WHERE t.serie_id = %s
+                AND h.episodio_id IS NULL
+                AND e.ruta_archivo IS NOT NULL
+                AND TRIM(e.ruta_archivo) != ''
+            ORDER BY t.numero, e.numero
             LIMIT 1
         """
         cursor.execute(consulta, (serie_id,))
@@ -147,56 +146,139 @@ def obtener_siguiente_episodio(serie_id):
         cursor.close()
         conexion.close()
 
-#Obtiene las películas pendientes del ciclo que pertenecen a Mi contenido.
-def obtener_peliculas_ciclo():
+# Consulta películas y el siguiente episodio disponible de cada serie.
+def _consultar_contenido_pendiente(cursor):
+    consulta = """
+        SELECT
+            p.id,
+            p.titulo,
+            p.anio,
+            p.duracion,
+            p.ruta_archivo,
+            'pelicula' AS tipo,
+            NULL AS temporada,
+            NULL AS episodio,
+            NULL AS serie_id
+        FROM catalogo_usuario cu
+        INNER JOIN peliculas p
+            ON cu.contenido_id = p.id
+        LEFT JOIN historial_ciclo_peliculas hp
+            ON hp.pelicula_id = p.id
+        WHERE cu.tipo_contenido = 'pelicula'
+            AND hp.pelicula_id IS NULL
+            AND p.ruta_archivo IS NOT NULL
+            AND TRIM(p.ruta_archivo) != ''
+        UNION ALL
+        SELECT
+            e.id,
+            CONCAT(s.titulo, ' - ', e.titulo) AS titulo,
+            s.anio,
+            e.duracion,
+            e.ruta_archivo,
+            'episodio' AS tipo,
+            t.numero AS temporada,
+            e.numero AS episodio,
+            s.id AS serie_id
+        FROM catalogo_usuario cu
+        INNER JOIN series s
+            ON cu.contenido_id = s.id
+        INNER JOIN temporadas t
+            ON t.serie_id = s.id
+        INNER JOIN episodios e
+            ON e.temporada_id = t.id
+        LEFT JOIN historial_ciclo_episodios he
+            ON he.episodio_id = e.id
+        WHERE cu.tipo_contenido = 'serie'
+            AND he.episodio_id IS NULL
+            AND e.ruta_archivo IS NOT NULL
+            AND TRIM(e.ruta_archivo) != ''
+            -- Solo permite el primer episodio pendiente de cada serie.
+            AND NOT EXISTS (
+                SELECT 1
+                FROM temporadas t2
+                INNER JOIN episodios e2
+                    ON e2.temporada_id = t2.id
+                LEFT JOIN historial_ciclo_episodios he2
+                    ON he2.episodio_id = e2.id
+                WHERE t2.serie_id = s.id
+                    AND he2.episodio_id IS NULL
+                    AND e2.ruta_archivo IS NOT NULL
+                    AND TRIM(e2.ruta_archivo) != ''
+                    AND (
+                        t2.numero < t.numero
+                        OR (
+                            t2.numero = t.numero
+                            AND e2.numero < e.numero
+                        )
+                    )
+            )
+    """
+    cursor.execute(consulta)
+    return cursor.fetchall()
+
+# Obtiene los elementos pendientes del ciclo compartido.
+# Solo reinicia cuando no queda ninguna película ni episodio pendiente.
+def obtener_contenido_pendiente_ciclo():
     conexion = conectar()
     cursor = conexion.cursor(dictionary=True)
     try:
-        consulta = """
-            SELECT
-                p.id,
-                p.titulo,
-                p.anio,
-                p.duracion,
-                p.ruta_archivo
-            FROM catalogo_usuario cu
-            INNER JOIN peliculas p
-                ON cu.contenido_id = p.id
-            LEFT JOIN historial_ciclo_peliculas h
-                ON h.pelicula_id = p.id
-            WHERE cu.tipo_contenido = 'pelicula'
-                AND p.ruta_archivo IS NOT NULL
-                AND TRIM(p.ruta_archivo) != ''
-                AND h.pelicula_id IS NULL
-        """
-        cursor.execute(consulta)
-        pendientes = cursor.fetchall()
-        #Reiniciar el ciclo si todas las películas de Mi contenido ya fueron emitidas.
+        pendientes = _consultar_contenido_pendiente(cursor)
         if not pendientes:
-            cursor.execute("""
-                DELETE h
-                FROM historial_ciclo_peliculas h
-                INNER JOIN catalogo_usuario cu
-                    ON cu.contenido_id = h.pelicula_id
-                    AND cu.tipo_contenido = 'pelicula'
-            """)
-            conexion.commit()
-            cursor.execute("""
-                SELECT
-                    p.id,
-                    p.titulo,
-                    p.anio,
-                    p.duracion,
-                    p.ruta_archivo
-                FROM catalogo_usuario cu
-                INNER JOIN peliculas p
-                    ON cu.contenido_id = p.id
-                WHERE cu.tipo_contenido = 'pelicula'
-                    AND p.ruta_archivo IS NOT NULL
-                    AND TRIM(p.ruta_archivo) != ''
-            """)
-            pendientes = cursor.fetchall()
+            cursor.execute("DELETE FROM historial_ciclo_peliculas")
+            cursor.execute("DELETE FROM historial_ciclo_episodios")
+            pendientes = _consultar_contenido_pendiente(cursor)
+        conexion.commit()
         return pendientes
+    except Exception:
+        conexion.rollback()
+        raise
+    finally:
+        cursor.close()
+        conexion.close()
+
+# Mantiene la función anterior para no romper referencias existentes.
+# Ya no reinicia el ciclo de películas por separado.
+def obtener_peliculas_ciclo():
+    pendientes = obtener_contenido_pendiente_ciclo()
+    return [
+        contenido
+        for contenido in pendientes
+        if contenido["tipo"] == "pelicula"
+    ]
+
+# Marca una película como emitida durante el ciclo.
+def marcar_pelicula_emitida(pelicula_id):
+    conexion = conectar()
+    cursor = conexion.cursor()
+    try:
+        cursor.execute(
+            """
+            INSERT IGNORE INTO historial_ciclo_peliculas (pelicula_id)
+            VALUES (%s)
+            """,
+            (pelicula_id,)
+        )
+        conexion.commit()
+    except Exception:
+        conexion.rollback()
+        raise
+    finally:
+        cursor.close()
+        conexion.close()
+
+# Marca un episodio como emitido durante el ciclo.
+def marcar_episodio_emitido(episodio_id):
+    conexion = conectar()
+    cursor = conexion.cursor()
+    try:
+        cursor.execute(
+            """
+            INSERT IGNORE INTO historial_ciclo_episodios (episodio_id)
+            VALUES (%s)
+            """,
+            (episodio_id,)
+        )
+        conexion.commit()
     except Exception:
         conexion.rollback()
         raise
