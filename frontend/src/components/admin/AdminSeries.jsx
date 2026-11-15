@@ -344,20 +344,14 @@ function AdminSeries() {
     return (
         <div className="admin-page">
             <section className="admin-section">
-        {/*}    <button
-                    type="button"
-                    className="admin-back-button"
-                    onClick={() => {
-                        setSerieSeleccionada(null);
-                        setTemporadaSeleccionada(null);
-                        limpiarFormularioSerie();
-                        limpiarFormularioEpisodio();
-                        setMensaje("");
-                        setError("");
-                    }}
-                >
-                    ← {serieSeleccionada ? "Volver a series" : "Volver a administración"}
-                </button> */}
+            <header className="admin-header">
+                <div>
+                    <span className="admin-subtitle">PLAYCHANNEL / SERIES</span>
+                    <h1>Series</h1>
+                    <p>Administra las series del catálogo de PlayChannel.</p>
+                </div>
+                <div className="admin-header-icon">⚙</div>
+            </header>
                 <h2>{serieSeleccionada ? serieSeleccionada.titulo : "Administración de series"}</h2>
                 <p className="admin-description">
                     {serieSeleccionada ? "Administra las temporadas y episodios de esta serie." : "Registra y administra las series del catálogo preestablecido."}
@@ -431,6 +425,7 @@ function AdminSeries() {
                                 )}
                         </div>
                     </form>
+                    <br/>
                     <div className="admin-list">
                         <h3>Series registradas</h3>
                         {cargando ? (

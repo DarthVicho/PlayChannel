@@ -5,6 +5,7 @@ from pathlib import Path
 from flask import Flask, jsonify, request, send_file, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+
 from backend.database import (
     obtener_peliculas,
     obtener_series,
@@ -19,6 +20,7 @@ from backend.database import (
     agregar_catalogo_usuario,
     eliminar_catalogo_usuario,
     obtener_catalogo_preestablecido,
+    obtener_estadisticas_catalogo,
     agregar_pelicula_catalogo
 )
 
@@ -552,6 +554,18 @@ def listar_catalogo():
         app.logger.exception("Error al consultar el catálogo.")
         return jsonify({
             "mensaje": "No se pudo obtener el catálogo."
+        }), 500
+
+#Obtiene las estadísticas del catálogo para el dashboard administrativo.
+@app.route("/api/admin/estadisticas", methods=["GET"])
+def admin_estadisticas():
+    try:
+        estadisticas = obtener_estadisticas_catalogo()
+        return jsonify(estadisticas), 200
+    except Exception:
+        app.logger.exception("Error al obtener las estadísticas del catálogo.")
+        return jsonify({
+            "mensaje": "No se pudieron obtener las estadísticas."
         }), 500
 
 # Incorpora una película existente al catálogo preestablecido.
@@ -1786,6 +1800,37 @@ def admin_eliminar_episodio(episodio_id):
         if conexion:
             conexion.close()
 
+# Obtiene el siguiente episodio pendiente de una serie.
+def obtener_siguiente_episodio(serie_id):
+    conexion = conectar()
+    cursor = conexion.cursor(dictionary=True)
+    try:
+        consulta = """
+            SELECT
+                episodios.id,
+                temporadas.numero AS temporada,
+                episodios.numero AS episodio,
+                episodios.titulo,
+                episodios.duracion,
+                episodios.ruta_archivo
+            FROM episodios
+            INNER JOIN temporadas
+                ON episodios.temporada_id = temporadas.id
+            LEFT JOIN progreso
+                ON progreso.episodio_id = episodios.id
+            WHERE temporadas.serie_id = %s
+                AND (
+                    progreso.id IS NULL
+                    OR progreso.terminado = FALSE
+                )
+            ORDER BY temporadas.numero, episodios.numero
+            LIMIT 1
+        """
+        cursor.execute(consulta, (serie_id,))
+        return cursor.fetchone()
+    finally:
+        cursor.close()
+        conexion.close()
 #MAIN
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

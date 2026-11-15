@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useState } from "react";
 import "../css/Catalogo.css";
 
@@ -122,24 +121,15 @@ function Catalogo() {
                 </div>
 
                 <div className="catalogo-filtros">
-                    <button
-                        className={filtro === "todos" ? "activo" : ""}
-                        onClick={() => setFiltro("todos")}
-                    >
+                    <button className={filtro === "todos" ? "activo" : ""} onClick={() => setFiltro("todos")}>
                         Todos
                     </button>
 
-                    <button
-                        className={filtro === "pelicula" ? "activo" : ""}
-                        onClick={() => setFiltro("pelicula")}
-                    >
+                    <button className={filtro === "pelicula" ? "activo" : ""} onClick={() => setFiltro("pelicula")}>
                         Películas
                     </button>
 
-                    <button
-                        className={filtro === "serie" ? "activo" : ""}
-                        onClick={() => setFiltro("serie")}
-                    >
+                    <button className={filtro === "serie" ? "activo" : ""} onClick={() => setFiltro("serie")}>
                         Series
                     </button>
                 </div>
@@ -167,56 +157,42 @@ function Catalogo() {
                         const clave = `${item.tipo_contenido}-${item.contenido_id}`;
 
                         return (
-<article className="catalogo-card" key={clave}>
-    <div className="catalogo-poster-container">
-        {item.tipo_contenido === "pelicula" && item.ruta_portada ? (
-            <img
-                src={`${API_URL}/api/portadas/${encodeURIComponent(item.ruta_portada)}`}
-                alt={`Portada de ${item.titulo}`}
-                className="catalogo-card-poster"
-            />
-        ) : (
-            <div className="catalogo-poster-placeholder">
-                {item.tipo_contenido === "pelicula" ? "▶" : "▤"}
-            </div>
-        )}
+                        <article className="catalogo-card" key={clave}>
+                            <div className="catalogo-poster-container">
+                                {item.ruta_portada ? (
+                                    <img
+                                        src={`${API_URL}/api/portadas/${encodeURIComponent(item.ruta_portada)}`}
+                                        alt={`Portada de ${item.titulo}`}
+                                        className="catalogo-card-poster"
+                                    />
+                                ) : (
+                                    <div className="catalogo-poster-placeholder">
+                                        {item.tipo_contenido === "pelicula" ? "▶" : "▤"}
+                                    </div>
+                                )}
 
-        <button
-            className={`catalogo-agregar ${
-                agregado ? "agregado" : ""
-            }`}
-            onClick={() => agregarContenido(item)}
-            disabled={agregado || agregando === clave}
-        >
-            <span className="catalogo-agregar-icono">
-                {agregado ? "✓" : agregando === clave ? "…" : "+"}
-            </span>
+                                <button
+                                    className={`catalogo-agregar ${agregado ? "agregado" : ""}`} onClick={() => agregarContenido(item)} disabled={agregado || agregando === clave}>
+                                    <span className="catalogo-agregar-icono">
+                                        {agregado ? "✓" : agregando === clave ? "…" : "+"}
+                                    </span>
 
-            <span className="catalogo-agregar-texto">
-                {agregado
-                    ? "En Mi contenido"
-                    : agregando === clave
-                        ? "Agregando..."
-                        : "Agregar contenido"}
-            </span>
-        </button>
-    </div>
+                                    <span className="catalogo-agregar-texto">
+                                        {agregado ? "En Mi contenido" : agregando === clave ? "Agregando..." : "Agregar contenido"}
+                                    </span>
+                                </button>
+                            </div>
 
-    <div className="catalogo-card-info">
-        <span className="catalogo-tipo">
-            {item.tipo_contenido === "pelicula"
-                ? "PELÍCULA"
-                : "SERIE"}
-        </span>
-
-        <h3>{item.titulo}</h3>
-
-        <p>
-            {item.anio || "Año desconocido"}
-            {item.duracion ? ` · ${item.duracion} min` : ""}
-        </p>
-    </div>
-</article>
+                            <div className="catalogo-card-info">
+                                <span className="catalogo-tipo">
+                                    {item.tipo_contenido === "pelicula" ? "PELÍCULA" : "SERIE"}
+                                </span>
+                                <h3>{item.titulo}</h3>
+                                <p>
+                                    {item.anio || "Año desconocido"} {item.duracion ? ` · ${item.duracion} min` : ""}
+                                </p>
+                            </div>
+                        </article>
                         );
                     })}
                 </div>

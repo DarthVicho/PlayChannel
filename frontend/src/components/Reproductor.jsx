@@ -4,7 +4,6 @@ import "../css/Reproductor.css";
 const API_URL = "http://127.0.0.1:5000";
 
 function Reproductor({ pelicula, onTerminado }) {
-  // El mismo reproductor atiende películas y episodios sin alterar su estructura visual.
   const tipoContenido = pelicula?.tipo === "episodio" ? "episodios" : "peliculas";
   const urlVideo = pelicula?.tipo === "episodio"
     ? `${API_URL}/api/episodios/${pelicula.id}/video`
@@ -12,11 +11,11 @@ function Reproductor({ pelicula, onTerminado }) {
   const urlProgreso = pelicula?.tipo === "episodio"
     ? `${API_URL}/api/episodios/${pelicula.id}/progreso`
     : `${API_URL}/api/peliculas/${pelicula.id}/progreso`;
-
   const videoRef = useRef(null);
   const contenedorRef = useRef(null);
   const guardandoRef = useRef(false);
   const ultimoGuardadoRef = useRef(0);
+  const cambioEnCursoRef = useRef(false);
   const [error, setError] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [reproduciendo, setReproduciendo] = useState(false);
@@ -25,40 +24,36 @@ function Reproductor({ pelicula, onTerminado }) {
   const [volumen, setVolumen] = useState(1);
   const [silenciado, setSilenciado] = useState(false);
   const [pantallaCompleta, setPantallaCompleta] = useState(false);
-  // Convierte los segundos en un formato de tiempo legible para los controles.
-  const formatearTiempo = (segundos) => {
 
+  //Convierte los segundos en un formato de tiempo legible para los controles.
+  const formatearTiempo = (segundos) => {
     if (!Number.isFinite(segundos) || segundos < 0) return "00:00";
     const horas = Math.floor(segundos / 3600);
     const minutos = Math.floor((segundos % 3600) / 60);
     const segundosRestantes = Math.floor(segundos % 60);
     const formato = (numero) => String(numero).padStart(2, "0");
-
     return horas > 0
       ? `${horas}:${formato(minutos)}:${formato(segundosRestantes)}`
       : `${formato(minutos)}:${formato(segundosRestantes)}`;
   };
-  // Guarda la posición actual del video o marca el contenido como terminado.
+
+  //Guarda el progreso de películas o episodios.
   const guardarProgreso = useCallback(async (terminado = false) => {
     const video = videoRef.current;
     if (!video || !pelicula?.id || guardandoRef.current) return false;
     guardandoRef.current = true;
     try {
-      const respuesta = await fetch(
-        urlProgreso,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            posicion: terminado ? 0 : video.currentTime,
-            terminado,
-          }),
-        }
-      );
+      const respuesta = await fetch(urlProgreso, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          posicion: terminado ? 0 : video.currentTime,
+          terminado
+        })
+      });
       if (!respuesta.ok) {
         throw new Error("No se pudo guardar el progreso.");
       }
-
       ultimoGuardadoRef.current = Date.now();
       setMensaje("Progreso guardado");
       return true;
@@ -69,62 +64,81 @@ function Reproductor({ pelicula, onTerminado }) {
     } finally {
       guardandoRef.current = false;
     }
-
   }, [pelicula?.id, urlProgreso]);
-  // Registra los eventos del video, recupera el progreso y gestiona el cambio automático.
+
+  //Guarda el contenido y solicita el siguiente elemento del canal.
+  const avanzarContenido = useCallback(async () => {
+    if (cambioEnCursoRef.current || typeof onTerminado !== "function") return;
+    cambioEnCursoRef.current = true;
+    const guardado = await guardarProgreso(true);
+    if (!guardado) {
+      cambioEnCursoRef.current = false;
+      return;
+    }
+    try {
+      await onTerminado();
+    } catch (err) {
+      console.error("No se pudo cargar el siguiente contenido:", err);
+      setMensaje("No se pudo cargar el siguiente contenido");
+      cambioEnCursoRef.current = false;
+    }
+  }, [guardarProgreso, onTerminado]);
+
+  //Registra los eventos del video, recupera el progreso y gestiona el cambio automático.
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !pelicula?.id) return;
     let cancelado = false;
-    let cambioSolicitado = false;
     let restaurarPendiente = null;
+    cambioEnCursoRef.current = false;
     setError("");
     setMensaje("");
     setTiempo(0);
     setDuracion(0);
     setReproduciendo(false);
     ultimoGuardadoRef.current = 0;
-    // Actualiza el tiempo transcurrido según la posición del video.
+
+    //Actualiza el tiempo transcurrido.
     const actualizarTiempo = () => {
       setTiempo(video.currentTime || 0);
     };
-    // Actualiza la duración cuando el navegador conoce el tiempo total del video.
+
+    //Actualiza la duración del video.
     const actualizarDuracion = () => {
       if (Number.isFinite(video.duration) && video.duration > 0) {
         setDuracion(video.duration);
       }
     };
-    // Actualiza el estado visual cuando el video comienza a reproducirse.
+
+    //Actualiza el estado de reproducción.
     const alReproducir = () => setReproduciendo(true);
-    // Actualiza el estado visual cuando el video queda pausado.
     const alPausar = () => setReproduciendo(false);
-    // Guarda el progreso cada diez segundos mientras se reproduce el video.
+
+    //Guarda el progreso cada diez segundos.
     const guardarAlActualizar = () => {
       if (Date.now() - ultimoGuardadoRef.current >= 10000) {
         guardarProgreso();
       }
     };
-    // Guarda la posición del video cuando el usuario lo pausa.
+
+    //Guarda el progreso cuando se pausa manualmente.
     const guardarAlPausar = () => {
-      guardarProgreso();
-    };
-    // Guarda el estado final y solicita el siguiente contenido una sola vez.
-    const alTerminar = async () => {
-      if (cambioSolicitado || cancelado) return;
-      cambioSolicitado = true;
-      console.log("El video terminó. Guardando progreso...");
-      await guardarProgreso(true);
-      if (!cancelado && typeof onTerminado === "function") {
-        console.log("Solicitando el siguiente contenido...");
-        await onTerminado();
+      if (!video.ended && !cambioEnCursoRef.current) {
+        guardarProgreso();
       }
     };
-    // Restaura la posición anterior del video si existe un progreso guardado.
+
+    //Solicita el siguiente contenido cuando termina el video.
+    const alTerminar = () => {
+      if (!cancelado) {
+        avanzarContenido();
+      }
+    };
+
+    //Recupera la posición guardada anteriormente.
     const recuperarProgreso = async () => {
       try {
-        const respuesta = await fetch(
-          urlProgreso
-        );
+        const respuesta = await fetch(urlProgreso);
         if (!respuesta.ok || cancelado) return;
         const progreso = await respuesta.json();
         const posicion = Number(progreso.posicion);
@@ -146,9 +160,7 @@ function Reproductor({ pelicula, onTerminado }) {
           restaurar();
         } else {
           restaurarPendiente = restaurar;
-          video.addEventListener("loadedmetadata", restaurar, {
-            once: true,
-          });
+          video.addEventListener("loadedmetadata", restaurar, { once: true });
         }
       } catch (err) {
         console.error("No se pudo recuperar el progreso:", err);
@@ -180,12 +192,10 @@ function Reproductor({ pelicula, onTerminado }) {
         video.removeEventListener("loadedmetadata", restaurarPendiente);
       }
     };
-  }, [pelicula?.id, guardarProgreso, onTerminado]);
+  }, [pelicula?.id, guardarProgreso, avanzarContenido, urlProgreso]);
 
-
-  //Detecta cuándo el reproductor entra o sale del modo de pantalla completa.
+  //Detecta cuándo el reproductor entra o sale de pantalla completa.
   useEffect(() => {
-  //Sincroniza el estado de pantalla completa con el navegador.
     const actualizarPantalla = () => {
       setPantallaCompleta(Boolean(document.fullscreenElement));
     };
@@ -195,7 +205,7 @@ function Reproductor({ pelicula, onTerminado }) {
     };
   }, []);
 
-  // Inicia o pausa el video según su estado actual.
+  //Inicia o pausa el video.
   const alternarReproduccion = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -209,7 +219,7 @@ function Reproductor({ pelicula, onTerminado }) {
     }
   };
 
-  //Cambia la posición del video cuando el usuario mueve la barra de progreso.
+  //Cambia la posición del video.
   const cambiarTiempo = (evento) => {
     const video = videoRef.current;
     if (!video || !Number.isFinite(video.duration)) return;
@@ -218,7 +228,7 @@ function Reproductor({ pelicula, onTerminado }) {
     setTiempo(nuevoTiempo);
   };
 
-  //Cambia el volumen del video y actualiza el estado de silencio.
+  //Cambia el volumen.
   const cambiarVolumen = (evento) => {
     const nuevoVolumen = Number(evento.target.value);
     setVolumen(nuevoVolumen);
@@ -229,7 +239,7 @@ function Reproductor({ pelicula, onTerminado }) {
     }
   };
 
-  //Activa o desactiva el sonido del video.
+  //Activa o desactiva el sonido.
   const alternarSilencio = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -237,7 +247,7 @@ function Reproductor({ pelicula, onTerminado }) {
     setSilenciado(video.muted);
   };
 
-  //Activa o desactiva la pantalla completa del reproductor.
+  //Activa o desactiva la pantalla completa.
   const alternarPantallaCompleta = async () => {
     const contenedor = contenedorRef.current;
     if (!contenedor) return;
@@ -252,11 +262,9 @@ function Reproductor({ pelicula, onTerminado }) {
     }
   };
 
-  //Guarda la posición actual e invoca el cambio manual al siguiente contenido.
+  //Guarda el contenido actual como terminado y avanza.
   const cambiarContenido = async () => {
-    if (typeof onTerminado !== "function") return;
-    await guardarProgreso();
-    await onTerminado();
+    await avanzarContenido();
   };
 
   //Muestra un mensaje cuando todavía no hay contenido seleccionado.
@@ -274,8 +282,10 @@ function Reproductor({ pelicula, onTerminado }) {
     <section className="reproductor" ref={contenedorRef}>
       {pelicula.ruta_archivo ? (
         <div className="reproductor-pantalla">
-          <video ref={videoRef} key={`${tipoContenido}-${pelicula.id}`} className="video-player" autoPlay preload="auto" playsInline src={urlVideo}
-            onError={() => setError("No se pudo reproducir este video.")} onClick={alternarReproduccion} onCanPlay={(evento) => { evento.currentTarget.play().catch(() => {
+          <video ref={videoRef} key={`${tipoContenido}-${pelicula.id}`} className="video-player" autoPlay preload="auto"
+            playsInline src={urlVideo} onError={() => setError("No se pudo reproducir este video.")} onClick={alternarReproduccion}
+            onCanPlay={(evento) => {
+              evento.currentTarget.play().catch(() => {
                 setMensaje("Pulsa reproducir para iniciar el video");
               });
             }}
@@ -318,11 +328,11 @@ function Reproductor({ pelicula, onTerminado }) {
                   {silenciado || volumen === 0 ? "×" : "◖"}
                 </button>
 
-                <input
-                  className="control-volumen" type="range" min="0" max="1" step="0.05" value={silenciado ? 0 : volumen} onChange={cambiarVolumen} aria-label="Volumen"
-                />
+                <input className="control-volumen" type="range" min="0" max="1"
+                  step="0.05" value={silenciado ? 0 : volumen} onChange={cambiarVolumen} aria-label="Volumen"/>
 
-                <button type="button"className="control-boton" onClick={alternarPantallaCompleta} aria-label={pantallaCompleta? "Salir de pantalla completa": "Pantalla completa"}>
+                <button type="button" className="control-boton" onClick={alternarPantallaCompleta}
+                  aria-label={pantallaCompleta ? "Salir de pantalla completa" : "Pantalla completa"}>
                   {pantallaCompleta ? "⤢" : "⛶"}
                 </button>
               </div>
@@ -342,10 +352,16 @@ function Reproductor({ pelicula, onTerminado }) {
 
       <div className="reproductor-detalles">
         <span className="section-label">EN EMISIÓN</span>
-        <h2>{pelicula.titulo}</h2>
+        {pelicula.tipo === "episodio" ? (
+          <h2>
+            {pelicula.titulo.split(" - ")[0]} -  T{pelicula.temporada}:E{pelicula.numero_episodio}  {pelicula.titulo.split(" - ").slice(1).join(" - ")}
+          </h2>
+        ) : (
+          <h2>{pelicula.titulo}</h2>
+        )}
         <p>
           {pelicula.anio || "Año desconocido"} ·{" "}
-          {pelicula.duracion ? `${pelicula.duracion} minutos`: "Duración desconocida"}
+          {pelicula.duracion ? `${pelicula.duracion} minutos` : "Duración desconocida"}
         </p>
       </div>
     </section>
