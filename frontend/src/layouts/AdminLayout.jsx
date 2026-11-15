@@ -1,12 +1,13 @@
 import { NavLink, Outlet } from "react-router-dom";
-import "../css/MainLayout.css";
+import '../css/AdminLayout.css'
+import '../css/Admin.css'
 
 function AdminLayout() {
     return (
-        <div className="app-layout">
-            <aside className="sidebar">
-                <div className="sidebar-brand">
-                    <div className="brand-icon">▶</div>
+        <div className="app-layout-admin">
+            <aside className="sidebar-admin">
+                <div className="sidebar-brand-admin">
+                    <div className="brand-icon-admin">▶</div>
                     <div>
                         <h1>Play Channel</h1>
                         <span>Tu canal personal</span>

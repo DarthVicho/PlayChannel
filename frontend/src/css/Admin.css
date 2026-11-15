@@ -532,6 +532,361 @@
 .admin-serie-actions button:hover {
     background: #343434;
 }
+
+
+/* =================================
+   IDENTIDAD VISUAL DASHBOARD
+================================= */
+
+.admin-page,
+.admin-section {
+    color: #e8e8e8;
+}
+
+.admin-page {
+    background: #111820;
+}
+
+.admin-section h2,
+.admin-list-section h2 {
+    color: #e8e8e8;
+}
+
+/* Tarjetas y formularios */
+
+.admin-card,
+.admin-form,
+.admin-movie-card,
+.admin-serie-card {
+    background: #050505;
+    border: 1px solid #303030;
+    border-radius: 12px;
+}
+
+.admin-card:hover,
+.admin-movie-card:hover {
+    background: #080808;
+    border-color: #d4aa50;
+}
+
+.admin-card-icon,
+.admin-movie-poster-placeholder {
+    background: #171717;
+    color: #d4aa50;
+}
+
+/* Textos */
+
+.admin-description,
+.admin-card p,
+.admin-movie-info p {
+    color: #a5a5a5;
+}
+
+.admin-card h3,
+.admin-movie-info h3,
+.admin-serie-info h3 {
+    color: #e8e8e8;
+}
+
+/* Formularios */
+
+.admin-form {
+    background: #050505;
+    border-color: #303030;
+}
+
+.admin-form-group label {
+    color: #e8e8e8;
+}
+
+.admin-form-group input,
+.admin-form-group textarea,
+.admin-form-group select {
+    background: #111820;
+    border: 1px solid #353535;
+    color: #e8e8e8;
+}
+
+.admin-form-group input:focus,
+.admin-form-group textarea:focus,
+.admin-form-group select:focus {
+    border-color: #d4aa50;
+    box-shadow: 0 0 0 2px rgba(212, 170, 80, 0.12);
+}
+
+.admin-form-group input::placeholder,
+.admin-form-group textarea::placeholder {
+    color: #777;
+}
+
+.admin-form-group input[type="file"]::file-selector-button {
+    background: #252525;
+    color: #e8e8e8;
+}
+
+.admin-form-group input[type="file"]::file-selector-button:hover {
+    background: #353535;
+}
+
+/* Botones */
+
+.admin-submit-button {
+    background: #d4aa50;
+    color: #111;
+}
+
+.admin-submit-button:hover:not(:disabled) {
+    background: #e2bd6c;
+}
+
+.admin-back-button {
+    background: #171717;
+    border-color: #353535;
+    color: #d4aa50;
+}
+
+.admin-back-button:hover {
+    border-color: #d4aa50;
+    color: #e2bd6c;
+}
+
+.admin-edit-button {
+    border-color: #d4aa50;
+    color: #d4aa50;
+}
+
+.admin-edit-button:hover {
+    background: #d4aa50;
+    color: #111;
+}
+
+/* Tarjetas de películas y series */
+
+.admin-serie-card {
+    border-color: #303030;
+}
+
+.admin-serie-card:hover {
+    border-color: #d4aa50;
+}
+
+.admin-serie-anio,
+.admin-serie-descripcion {
+    color: #a5a5a5;
+}
+
+.admin-serie-info .admin-card-status {
+    color: #d4aa50;
+}
+
+.admin-serie-actions button {
+    background: #171717;
+    border: 1px solid #353535;
+    color: #e8e8e8;
+}
+
+.admin-serie-actions button:hover {
+    background: #252525;
+    border-color: #d4aa50;
+    color: #d4aa50;
+}
+
+/* Archivos actuales */
+
+.admin-current-file {
+    background: #111820;
+    border-color: #353535;
+    color: #e8e8e8;
+}
+
+.admin-file-name {
+    color: #d4aa50;
+}
+
+/* Ajuste de tonalidad: negro menos intenso */
+
+.admin-card,
+.admin-form,
+.admin-movie-card,
+.admin-serie-card {
+    background: #20252b;
+}
+
+.admin-card:hover,
+.admin-movie-card:hover {
+    background: #272d34;
+}
+
+.admin-card-icon,
+.admin-movie-poster-placeholder {
+    background: #303740;
+}
+
+.admin-form-group input,
+.admin-form-group textarea,
+.admin-form-group select {
+    background: #292f36;
+}
+
+.admin-form-group input[type="file"]::file-selector-button {
+    background: #353d46;
+}
+
+.admin-serie-actions button {
+    background: #303740;
+}
+
+.admin-serie-actions button:hover {
+    background: #3a424c;
+}
+
+.admin-current-file {
+    background: #292f36;
+}
+
+
+/* =================================
+   ADMINISTRACIÓN - CATÁLOGO
+================================= */
+
+.admin-catalogo-resumen {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin: 25px 0;
+}
+.admin-catalogo-resumen .admin-card {
+    background: #20252b;
+    border: 1px solid #303030;
+    border-radius: 12px;
+    padding: 22px;
+    text-align: center;
+}
+.admin-catalogo-resumen .admin-card h3 {
+    color: #d4aa50;
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+.admin-catalogo-resumen .admin-card p {
+    color: #a5a5a5;
+}
+.admin-catalogo-controles {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin: 30px 0 20px;
+}
+.admin-catalogo-controles h3 {
+    color: #e8e8e8;
+}
+.admin-catalogo-filtros {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.admin-catalogo-filtros button {
+    background: #20252b;
+    border: 1px solid #353d46;
+    border-radius: 8px;
+    color: #e8e8e8;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+.admin-catalogo-filtros button:hover,
+.admin-catalogo-filtros button.activo {
+    background: #d4aa50;
+    border-color: #d4aa50;
+    color: #111820;
+}
+.admin-catalogo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 22px;
+    margin-top: 20px;
+}
+.admin-catalogo-grid .admin-movie-card {
+    background: #20252b;
+    border: 1px solid #303030;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: 0.2s ease;
+}
+.admin-catalogo-grid .admin-movie-card:hover {
+    border-color: #d4aa50;
+    transform: translateY(-3px);
+}
+.admin-catalogo-poster {
+    width: 100%;
+    height: 280px;
+    overflow: hidden;
+    background: #303740;
+}
+.admin-catalogo-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.admin-catalogo-poster .admin-movie-poster-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 45px;
+    color: #d4aa50;
+    background: #303740;
+}
+.admin-catalogo-grid .admin-movie-info {
+    padding: 16px;
+}
+.admin-catalogo-tipo {
+    color: #d4aa50;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+.admin-catalogo-grid .admin-movie-info h3 {
+    color: #e8e8e8;
+    margin: 8px 0;
+}
+.admin-catalogo-grid .admin-movie-info p {
+    color: #a5a5a5;
+    margin: 5px 0;
+}
+.admin-catalogo-vacio {
+    background: #20252b;
+    border: 1px solid #303030;
+    border-radius: 12px;
+    padding: 35px;
+    text-align: center;
+    color: #a5a5a5;
+}
+.admin-catalogo-vacio h3 {
+    color: #e8e8e8;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 650px) {
+    .admin-catalogo-resumen {
+        grid-template-columns: 1fr;
+    }
+    .admin-catalogo-controles {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .admin-catalogo-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+    .admin-catalogo-poster {
+        height: 220px;
+    }
+}
+
 /* ==============================
    RESPONSIVE
 ================================ */

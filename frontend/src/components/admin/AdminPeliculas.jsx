@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 const API_URL = "http://127.0.0.1:5000";
 
-function AdminPeliculas({ volverInicio }) {
+function AdminPeliculas() {
     const [titulo, setTitulo] = useState("");
     const [anio, setAnio] = useState("");
     const [duracion, setDuracion] = useState("");
@@ -211,7 +211,16 @@ function AdminPeliculas({ volverInicio }) {
     }
 
     return (
-        <section className="admin-section">
+        <div className="admin-page">
+            <section className="admin-section">
+            <header className="admin-header">
+                <div>
+                    <span className="admin-subtitle">PLAYCHANNEL / PELÍCULAS</span>
+                    <h1>Películas</h1>
+                    <p>Administra las películas del catálogo de PlayChannel.</p>
+                </div>
+                <div className="admin-header-icon">⚙</div>
+            </header>
             <h2>{editandoId ? "Editar película" : "Registro de películas"}</h2>
             <p className="admin-description">
                 {editandoId
@@ -407,6 +416,7 @@ function AdminPeliculas({ volverInicio }) {
                 </div>
             </div>
         </section>
+        </div>
     );
 }
 
